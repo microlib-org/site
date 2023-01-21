@@ -1,0 +1,7 @@
+site_name: Microlib
+
+theme:
+    name: readthedocs
+    highlightjs: true
+    hljs_languages:
+        - python
