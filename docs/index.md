@@ -7,7 +7,7 @@ What is a microlib?
 A python package is called a microlib, if all of the 
 following are true:
 
-* **Small**: Not more than 5 public classes or functions
+* **Small**: Not more than 15 public classes or functions
 * **Restricted**: The microlib should do one thing and do it well, no vague responsibilities.
 * **Tested**: 100% test coverage
 * **Cohesive**: 100% third-party dependency cohesion
