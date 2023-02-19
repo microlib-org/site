@@ -23,9 +23,9 @@ DataFrameMmap API:
 SparseDataFrameMmap API:
 
 1. [Create a SparseDataFrameMmap from list of dictionaries](#create-a-raggedmmap-from-list-of-samples)
-2. [Create a RaggedMmap from a generator](#create-a-raggedmmap-from-a-generator)
-3. [Open an existing RaggedMmap](#open-an-existing-raggedmmap)
-4. [Append new samples to a RaggedMmap](#append-new-samples-to-a-raggedmmap)
+2. [Create a SparseDataFrameMmap from a generator](#create-a-raggedmmap-from-a-generator)
+3. [Open an existing SparseDataFrameMmap](#open-an-existing-raggedmmap)
+4. [Append new samples to a SparseDataFrameMmap](#append-new-samples-to-a-raggedmmap)
 
 
 ### Generate batches from a function applied on data
@@ -157,4 +157,50 @@ df_mmap = DataFrameMmap('df_mmap')
 # len(df_mmap) now returns the number of samples in the dataframe
 # df_mmap[5] is now a dictionary representing the 5-th sample
 # df_mma['col'] is now a mmap representing the 
+```
+
+If you want to open a column with a specific wrapper function (see `mmap_ninja`'s `wrapper_fn` parameter), you can
+pass a value to the `wrapper_fn_dict` parameter. 
+
+If only a few columns need to be read from the parent directory, pass them to the `subset` argument. 
+
+If `target_keys` is passed, then each sample will contain additional two keys: `idx` and `tasks`.
+They can be used when using the `DataFrameMmap` as a dataset for training.
+
+### Append new samples to a DataFrameMmap
+
+You can add new samples to a `DataFrameMmap` easily.
+
+To add a single sample, use the `.append` method.
+
+To add multiple samples, use the `.extend` method.
+
+To add multiple samples, represented by a dictionary of lists, use the `.extend_with_list_of_dicts`.
+
+```python
+import numpy as np
+from mmap_ninja_dataframe.dense import DataFrameMmap
+
+dataframe_mmap = DataFrameMmap('df_mmap')
+dataframe_mmap.append({'description': 'He talked for so long.', 'tokens': np.array([1, 2, 3])})
+```
+
+### Create a SparseDataFrameMmap from list of dictionaries
+
+
+To create a `SparseDataFrameMmap` from a `list` of `dict`s, just use the `SparseDataFrameMmap.from_list_of_dicts` method:
+
+```python
+import numpy as np
+from mmap_ninja_dataframe.sparse import SparseDataFrameMmap
+
+dicts = [
+    {'input': np.array([1., 3., 7.1]), 'target': 0},
+    {'input': np.array([0.1, 23.])}
+]
+SparseDataFrameMmap.from_list_of_dicts(
+    out_dir='dataframe',
+    dicts=dicts,
+    verbose=True
+)
 ```
