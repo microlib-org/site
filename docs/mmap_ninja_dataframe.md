@@ -22,9 +22,9 @@ DataFrameMmap API:
 
 SparseDataFrameMmap API:
 
-1. [Create a SparseDataFrameMmap from list of dictionaries](#create-a-raggedmmap-from-list-of-samples)
-2. [Create a SparseDataFrameMmap from a generator](#create-a-raggedmmap-from-a-generator)
-3. [Open an existing SparseDataFrameMmap](#open-an-existing-raggedmmap)
+1. [Create a SparseDataFrameMmap from list of dictionaries](#create-a-sparsedataframemmap-from-list-of-dictionaries)
+2. [Create a SparseDataFrameMmap from a generator](#create-a-sparsedataframemmap-from-a-generator)
+3. [Open an existing SparseDataFrameMmap](#open-an-existing-sparsedataframemmap)
 4. [Append new samples to a SparseDataFrameMmap](#append-new-samples-to-a-raggedmmap)
 
 
@@ -187,7 +187,6 @@ dataframe_mmap.append({'description': 'He talked for so long.', 'tokens': np.arr
 
 ### Create a SparseDataFrameMmap from list of dictionaries
 
-
 To create a `SparseDataFrameMmap` from a `list` of `dict`s, just use the `SparseDataFrameMmap.from_list_of_dicts` method:
 
 ```python
@@ -203,4 +202,61 @@ SparseDataFrameMmap.from_list_of_dicts(
     dicts=dicts,
     verbose=True
 )
+```
+
+
+### Create a SparseDataFrameMmap from a generator
+
+Very often, you cannot load the whole dataset into memory. In these cases, you can use the `SparseDataFrameMmap.from_generator`
+method. For example:
+
+
+```python
+from dnn_cool_synthetic_dataset.base import create_dataset
+
+from mmap_ninja_dataframe.sparse import SparseDataFrameMmap
+
+dicts = create_dataset(10_000)
+sparse_mmap: SparseDataFrameMmap = SparseDataFrameMmap.from_generator(
+    out_dir='sparse',
+    sample_generator=dicts,
+    batch_size=64,
+    verbose=True
+)
+```
+
+### Open an existing SparseDataFrameMmap
+
+Once you have created a `SparseDataFrameMmap`, you can open it using its constructor.
+
+```python
+from mmap_ninja_dataframe.sparse import SparseDataFrameMmap
+
+df_mmap = SparseDataFrameMmap('df_mmap')
+# len(df_mmap) now returns the number of samples in the dataframe
+# df_mmap[5] is now a dictionary representing the 5-th sample
+```
+
+If you want to open a column with a specific wrapper function (see `mmap_ninja`'s `wrapper_fn` parameter), you can
+pass a value to the `wrapper_fn_dict` parameter. 
+
+If only a few columns need to be read from the parent directory, pass them to the `subset` argument. 
+
+If `target_keys` is passed, then each sample will contain additional two keys: `idx` and `tasks`.
+They can be used when using the `DataFrameMmap` as a dataset for training.
+
+### Append new samples to a SparseDataFrameMmap
+
+You can add new samples to a `SparseDataFrameMmap` easily.
+
+To add a single sample, use the `.append` method.
+
+To add multiple samples, use the `.extend` method.
+
+```python
+import numpy as np
+from mmap_ninja_dataframe.dense import DataFrameMmap
+
+dataframe_mmap = DataFrameMmap('df_mmap')
+dataframe_mmap.append({'description': 'He talked for so long.', 'tokens': np.array([1, 2, 3])})
 ```
