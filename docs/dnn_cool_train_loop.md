@@ -5,6 +5,8 @@ Here, you can find a full list of the things you can do with `dnn_cool_train_loo
 The train/valid loop is done by predicting always with batch size equal to 1, and using gradient accumulation to 
 simulate the effective batch size. 
 This means that custom collator is not needed, even for inputs of different shapes, but training is a little slower.
+The dataset should be a `dict`-based dataset, which has two additional keys: `idx` (the index in the global dataset)
+and `tasks` - the targets, for which a backward pass should be done.
 
 ## Contents
 
